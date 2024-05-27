@@ -1,6 +1,7 @@
 ﻿using Domain.Contracts;
 using Domain.Entitties;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,14 @@ namespace Infrastructure
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Data Source=OWAGEH-LT-11120;Initial Catalog=CleanArch;Integrated Security=True;TrustServerCertificate=True");
+            }
         }
     }
 }

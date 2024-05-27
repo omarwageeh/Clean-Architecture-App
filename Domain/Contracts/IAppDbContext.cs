@@ -14,7 +14,6 @@ namespace Domain.Contracts
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<CustomerDetails> CustomerDetails { get; set; }
-
         int SaveChanges();
     }
 }
