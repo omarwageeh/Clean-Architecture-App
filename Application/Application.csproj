@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Customer Details\Events\" />
+    <Folder Include="Customer Details\Commands\" />
+    <Folder Include="Customer Details\Queries\" />
+    <Folder Include="OrderDetails\Commands\" />
+    <Folder Include="OrderDetails\Events\" />
+    <Folder Include="OrderDetails\Queries\" />
+    <Folder Include="Order\Commands\" />
+    <Folder Include="Order\Events\" />
+    <Folder Include="Order\Queries\" />
+    <Folder Include="Product\Commands\" />
+    <Folder Include="Product\Events\" />
+    <Folder Include="Product\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+  </ItemGroup>
+
+</Project>
