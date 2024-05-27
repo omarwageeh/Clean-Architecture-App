@@ -6,13 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Abstractions.Data
+namespace Domain.Contracts
 {
-    public interface IAppDbContext
+    public interface IAppDbContext : IDisposable
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<CustomerDetails> CustomerDetails { get; set; }
+
+        int SaveChanges();
     }
 }

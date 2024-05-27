@@ -1,4 +1,4 @@
-﻿namespace Web
+﻿namespace WebApi
 {
     public class DependencyInjection
     {

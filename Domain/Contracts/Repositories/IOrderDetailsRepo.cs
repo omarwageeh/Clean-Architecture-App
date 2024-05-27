@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Abstractions.Data.Repositories
+namespace Domain.Contracts.Repositories
 {
     public interface IOrderDetailsRepo : IGenericRepo<OrderDetails>
     {

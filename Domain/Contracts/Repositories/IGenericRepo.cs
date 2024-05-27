@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Abstractions.Data.Repositories
+namespace Domain.Contracts.Repositories
 {
     public interface IGenericRepo<T> where T : class
     {

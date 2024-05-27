@@ -1,4 +1,4 @@
-﻿namespace Web.Helpers
+﻿namespace WebApi.Helpers
 {
     public class Mapper
     {

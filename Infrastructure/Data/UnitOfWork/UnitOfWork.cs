@@ -1,4 +1,6 @@
-﻿using Application.Abstractions.Data.UnitofWork;
+﻿using Domain.Contracts;
+using Domain.Contracts.Repositories;
+using Domain.Contracts.UnitofWork;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,16 +13,28 @@ namespace Infrastructure.Data.UnitOfWork
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private bool _disposedValue;
-        private readonly AppDbContext _context;
+        private readonly IAppDbContext _context;
 
-        public UnitOfWork(AppDbContext context)
+        public ICustomerDetailsRepo CustomerDetailsRepo {get;}
+
+        public IOrderDetailsRepo OrderDetailsRepo { get; }
+
+        public IOrderRepo OrderRepo { get; }
+
+        public IProductRepo ProductRepo { get; }
+
+        public UnitOfWork(IAppDbContext context, IProductRepo productRepo, ICustomerDetailsRepo customerDetailsRepo, IOrderRepo orderRepo, IOrderDetailsRepo orderDetailsRepo)
         {
             _context = context;
+            ProductRepo = productRepo;
+            CustomerDetailsRepo = customerDetailsRepo;
+            OrderRepo = orderRepo;
+            OrderDetailsRepo = orderDetailsRepo;
         }
 
-        public async Task<int> SaveChangesAsync()
+        public  int SaveChanges()
         {
-            return await _context.SaveChangesAsync();
+            return   _context.SaveChanges();
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -30,7 +44,6 @@ namespace Infrastructure.Data.UnitOfWork
                 {
                     _context.Dispose();
                 }
-
                 _disposedValue = true;
             }
         }

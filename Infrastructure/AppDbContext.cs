@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Data;
+﻿using Domain.Contracts;
 using Domain.Entitties;
 using Microsoft.EntityFrameworkCore;
 using System;
