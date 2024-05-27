@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entitties
 {
-    public class CustomerDetails
+    public class CustomerDetails : BaseEntity
     {
         [Required]
         public string Name { get; set; }
