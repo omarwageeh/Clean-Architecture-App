@@ -1,4 +1,5 @@
-﻿using Domain.Contracts.Repositories;
+﻿using Domain.Contracts;
+using Domain.Contracts.Repositories;
 using Domain.Entitties;
 using System;
 using System.Collections.Generic;
@@ -8,31 +9,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class OrderRepo : IOrderRepo
+    public class OrderRepo : GenericRepo<Order>, IOrderRepo
     {
-        public Task<Order> Add(Order entity)
+        public OrderRepo(IAppDbContext context) : base(context)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Order>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Order> GetById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Order> Update(Order entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }

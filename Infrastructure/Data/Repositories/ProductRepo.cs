@@ -1,5 +1,7 @@
-﻿using Domain.Contracts.Repositories;
+﻿using Domain.Contracts;
+using Domain.Contracts.Repositories;
 using Domain.Entitties;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +10,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class ProductRepo : IProductRepo
+    public class ProductRepo : GenericRepo<Product>, IProductRepo
     {
-        public Task<Product> Add(Product entity)
+        public ProductRepo(IAppDbContext context) : base(context)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Product>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Product> GetById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Product> Update(Product entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }

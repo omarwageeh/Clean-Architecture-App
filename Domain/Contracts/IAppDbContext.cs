@@ -14,6 +14,7 @@ namespace Domain.Contracts
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<CustomerDetails> CustomerDetails { get; set; }
-        int SaveChanges();
+        public DbSet<TEntity> Set<TEntity>() where TEntity : class;
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

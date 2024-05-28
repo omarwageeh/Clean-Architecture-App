@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Domain.Contracts.UnitofWork
@@ -13,6 +14,6 @@ namespace Domain.Contracts.UnitofWork
         IOrderDetailsRepo OrderDetailsRepo { get; }
         IOrderRepo OrderRepo { get; }
         IProductRepo ProductRepo { get; }
-        int SaveChanges();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

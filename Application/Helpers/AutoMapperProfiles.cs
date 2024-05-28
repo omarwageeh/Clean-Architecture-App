@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using Application.Commands;
+using Application.Dtos;
 using AutoMapper;
 using Domain.Entitties;
 
@@ -8,7 +9,8 @@ namespace WebApi.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Product, ProductDto>();
+            CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<AddProductCommand, Product>();
         }
     }
 }

@@ -32,9 +32,9 @@ namespace Infrastructure.Data.UnitOfWork
             OrderDetailsRepo = orderDetailsRepo;
         }
 
-        public  int SaveChanges()
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return   _context.SaveChanges();
+            return await _context.SaveChangesAsync(cancellationToken);
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -54,5 +54,7 @@ namespace Infrastructure.Data.UnitOfWork
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+
     }
 }

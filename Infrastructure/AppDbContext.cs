@@ -19,7 +19,9 @@ namespace Infrastructure
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<CustomerDetails> CustomerDetails { get; set; }
 
-
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new OrderDetailsMap());
