@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Application.Commands;
 using Application.Queries;
+using Asp.Versioning;
 
 namespace WebApi.Contollers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {

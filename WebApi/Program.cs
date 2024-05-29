@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Domain.Contracts;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddMyDependencyGroup();
 builder.Services.AddControllers();
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
