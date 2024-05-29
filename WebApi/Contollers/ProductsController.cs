@@ -16,21 +16,36 @@ namespace WebApi.Contollers
              _mediator = mediator;
             
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetProducts(GetProductByIdQuery getProductByIdQuery)
+        [Route("{id}")]
+        public async Task<IActionResult> GetProducts(Guid id)
         {
             try
             {
-                return Ok(await _mediator.Send(getProductByIdQuery));
+                return Ok(await _mediator.Send(new GetProductByIdQuery(id)));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
+        {
+            try
+            {
+                return Ok(await _mediator.Send(new GetProductsQuery()));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
-        
-        public async Task<IActionResult> AddProduct([FromBody] AddProductCommand addProductCommand )
+        public async Task<IActionResult> AddProduct(AddProductCommand addProductCommand )
         {
             try 
             { 
@@ -41,5 +56,6 @@ namespace WebApi.Contollers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }
