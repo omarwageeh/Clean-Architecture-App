@@ -1,9 +1,6 @@
 using Asp.Versioning;
-using Domain.Contracts;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
