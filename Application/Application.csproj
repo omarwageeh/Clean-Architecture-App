@@ -16,10 +16,9 @@
     <Folder Include="Customer Details\Queries\" />
     <Folder Include="OrderDetails\Commands\" />
     <Folder Include="OrderDetails\Events\" />
+    <Folder Include="OrderDetails\Handlers\" />
     <Folder Include="OrderDetails\Queries\" />
-    <Folder Include="Order\Commands\" />
     <Folder Include="Order\Events\" />
-    <Folder Include="Order\Queries\" />
     <Folder Include="Product\Events\" />
   </ItemGroup>
 

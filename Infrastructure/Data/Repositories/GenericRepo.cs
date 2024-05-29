@@ -24,12 +24,12 @@ namespace Infrastructure.Data.Repositories
             await _context.Set<T>().AddAsync(entity);
         }
         
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             if(entity != null)
             {
-                _context.Set<T>().Remove(entity!);
+                _context.Set<T>().Remove(entity);
             }
         }
 
@@ -37,12 +37,12 @@ namespace Infrastructure.Data.Repositories
         {
             if(expression == null)
             {
-                return await _context.Set<T>().ToListAsync();
+                return await _context.Set<T>().AsNoTracking<T>().ToListAsync();
             }
             return await _context.Set<T>().Where(expression).ToListAsync();
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<T?> GetById(Guid id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             return entity;

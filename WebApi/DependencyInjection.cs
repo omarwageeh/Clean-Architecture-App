@@ -30,7 +30,15 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IMediator, Mediator>();
             services.AddMediatR((config) =>
             {
-                config.RegisterServicesFromAssemblies(typeof(AddProductCommandHandler).Assembly, typeof(GetProductByIdQuery).Assembly, typeof(AddProductCommand).Assembly, typeof(GetProductByIdQueryHandler).Assembly);
+                config.RegisterServicesFromAssemblies(typeof(AddProductCommandHandler).Assembly, 
+                    typeof(GetProductByIdQuery).Assembly, 
+                    typeof(AddProductCommand).Assembly, 
+                    typeof(GetProductByIdQueryHandler).Assembly, 
+                    typeof(DeleteProductCommandHandler).Assembly, 
+                    typeof(DeleteProductCommand).Assembly, 
+                    typeof(UpdateProductCommand).Assembly,
+                    typeof(UpdateProductCommandHandler).Assembly
+                    );
             });
 
 

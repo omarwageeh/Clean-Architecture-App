@@ -25,14 +25,15 @@ namespace WebApi.Contollers
         {
             try
             {
-                return Ok(await _mediator.Send(new GetProductByIdQuery(id)));
+                var product = await _mediator.Send(new GetProductByIdQuery(id));
+                return product == null ?  NotFound() : Ok(product);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
@@ -50,14 +51,53 @@ namespace WebApi.Contollers
         public async Task<IActionResult> AddProduct(AddProductCommand addProductCommand )
         {
             try 
-            { 
-                return Ok(await _mediator.Send(addProductCommand));
+            {
+                var product = await _mediator.Send(addProductCommand);
+                return Created($"/api/v{ApiVersion.Default}/Products/{product.Id}", product);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateProducts(Guid id, UpdateProductCommand updateProductCommand)
+        {
+            try
+            {
+                if (id != updateProductCommand.Id)
+                {
+                    return ValidationProblem("Mismatch between id in uri and request body");
+                }
+                var result = await _mediator.Send(updateProductCommand);
+                if (result == -1) return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteProduct(Guid id)
+        {
+            try
+            {
+                var res = await _mediator.Send(new DeleteProductCommand(id));
+                if(res == -1) return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
 
     }
 }
