@@ -9,15 +9,9 @@ namespace Domain.Entitties
 {
     public class OrderDetails : BaseEntity
     {
-        public int ProductId { get; set; }
+        public required Guid ProductId { get; set; }
+        public required Product Product { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-
-        public OrderDetails(int productId, int quantity, decimal price) : base()
-        {
-            ProductId = productId;
-            Quantity = quantity;
-            Price = price;
-        }
     }
 }

@@ -1,45 +1,45 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Application.Commands;
+﻿using Application.Commands;
 using Application.Queries;
 using Asp.Versioning;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Contollers
 {
     [ApiVersion("1.0")]
     [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public ProductsController(IMediator mediator) 
-        { 
-             _mediator = mediator;
-            
+        public OrdersController(IMediator mediator)
+        {
+            _mediator = mediator;
+
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetProducts(Guid id)
+        public async Task<IActionResult> GetOrder(Guid id)
         {
             try
             {
-                var product = await _mediator.Send(new GetProductByIdQuery(id));
-                return product == null ?  NotFound() : Ok(product);
+                var order = await _mediator.Send(new GetOrderByIdQuery(id));
+                return order == null ? NotFound() : Ok(order);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetOrders()
         {
             try
             {
-                return Ok(await _mediator.Send(new GetProductsQuery()));
+                return Ok(await _mediator.Send(new GetOrdersQuery()));
             }
             catch (Exception ex)
             {
@@ -48,12 +48,12 @@ namespace WebApi.Contollers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(CreateProductCommand createProductCommand )
+        public async Task<IActionResult> AddOrder(CreateOrderCommand createOrderCommand)
         {
-            try 
+            try
             {
-                var product = await _mediator.Send(createProductCommand);
-                return Created($"/api/v{ApiVersion.Default}/Products/{product.Id}", product);
+                var order = await _mediator.Send(createOrderCommand);
+                return Created($"/api/v{ApiVersion.Default}/Orders/{order.Id}", order);
             }
             catch (Exception ex)
             {
@@ -63,19 +63,19 @@ namespace WebApi.Contollers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateProducts(Guid id, UpdateProductCommand updateProductCommand)
+        public async Task<IActionResult> UpdateOrder(Guid id, UpdateOrderCommand updateOrderCommand)
         {
             try
             {
-                if (id != updateProductCommand.Id)
+                if (id != updateOrderCommand.Id)
                 {
                     return ValidationProblem("Mismatch between id in uri and request body");
                 }
-                var result = await _mediator.Send(updateProductCommand);
+                var result = await _mediator.Send(updateOrderCommand);
                 if (result == -1) return NotFound();
                 return NoContent();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -83,12 +83,12 @@ namespace WebApi.Contollers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteProduct(Guid id)
+        public async Task<IActionResult> DeleteOrder(Guid id)
         {
             try
             {
-                var res = await _mediator.Send(new DeleteProductCommand(id));
-                if(res == -1) return NotFound();
+                var res = await _mediator.Send(new DeleteOrderCommand(id));
+                if (res == -1) return NotFound();
                 return NoContent();
             }
             catch (Exception ex)
@@ -100,4 +100,5 @@ namespace WebApi.Contollers
 
 
     }
+    
 }

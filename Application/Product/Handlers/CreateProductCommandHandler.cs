@@ -12,16 +12,16 @@ using Application.Dtos;
 
 namespace Application.Handlers
 {
-    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, ProductDto>
+    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductDto>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public AddProductCommandHandler(IUnitOfWork uow, IMapper mapper) 
+        public CreateProductCommandHandler(IUnitOfWork uow, IMapper mapper) 
         {
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<ProductDto> Handle(AddProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductDto> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var productToAdd = _mapper.Map<Product>(request);
             await _uow.ProductRepo.Add(productToAdd);

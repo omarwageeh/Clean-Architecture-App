@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Contracts.Repositories;
+using Domain.Entitties;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,9 @@ namespace Infrastructure.Data.Repositories
         {
             if(expression == null)
             {
-                return await _context.Set<T>().AsNoTracking<T>().ToListAsync();
+                return await _context.Set<T>()
+                    .AsNoTracking<T>()
+                    .ToListAsync();
             }
             return await _context.Set<T>().Where(expression).ToListAsync();
         }

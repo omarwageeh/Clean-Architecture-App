@@ -15,6 +15,7 @@ namespace Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.Property(p => p.Price).HasColumnType("money");
+            //builder.HasIndex(p => p.Name).IsUnique(unique: true);
            
         }
     }

@@ -8,11 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Queries
 {
-    public class GetOrderByIdQuery : IRequest<OrderDto>
+    public class GetOrdersQuery : IRequest<IEnumerable<OrderDto>>
     {
-        public Guid Id { get; set; }
-
-        public GetOrderByIdQuery(Guid id) => Id = id;
     }
-    
 }

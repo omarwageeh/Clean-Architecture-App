@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Commands
 {
-    public class AddProductCommand : IRequest<ProductDto>
+    public class CreateProductCommand : IRequest<ProductDto>
     {
         [Required]
         public string Name { get; set; } = string.Empty;
