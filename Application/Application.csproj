@@ -11,13 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Customer Details\Events\" />
-    <Folder Include="Customer Details\Commands\" />
-    <Folder Include="Customer Details\Queries\" />
-    <Folder Include="OrderDetails\Commands\" />
-    <Folder Include="OrderDetails\Events\" />
-    <Folder Include="OrderDetails\Handlers\" />
-    <Folder Include="OrderDetails\Queries\" />
     <Folder Include="Order\Events\" />
     <Folder Include="Product\Events\" />
   </ItemGroup>

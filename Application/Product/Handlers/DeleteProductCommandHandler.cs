@@ -22,6 +22,10 @@ namespace Application.Handlers
             {
                 return -1;
             }
+            if(await _uow.OrderDetailsRepo.Any(od=> od.ProductId == request.Id))
+            {
+                return -2;
+            }
             await _uow.ProductRepo.Delete(request.Id);
             return await _uow.SaveChangesAsync(cancellationToken);
         }

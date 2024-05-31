@@ -1,4 +1,5 @@
 ﻿using Application.Commands;
+using Application.Dtos;
 using Application.Queries;
 using Asp.Versioning;
 using MediatR;
@@ -35,11 +36,16 @@ namespace WebApi.Contollers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrders([FromQuery] GetOrdersQuery getOrdersQuery)
         {
             try
             {
-                return Ok(await _mediator.Send(new GetOrdersQuery()));
+                var response = await _mediator.Send(getOrdersQuery);
+                if(response.Orders.Any() && getOrdersQuery.Filter != null )
+                {
+                    return NotFound("No Orders Found");
+                }
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -69,11 +75,10 @@ namespace WebApi.Contollers
             {
                 if (id != updateOrderCommand.Id)
                 {
-                    return ValidationProblem("Mismatch between id in uri and request body");
+                    return ValidationProblem("Mismatch between Id in URI and request body");
                 }
                 var result = await _mediator.Send(updateOrderCommand);
-                if (result == -1) return NotFound();
-                return NoContent();
+                return result == -1 ? NotFound() : NoContent();
             }
             catch (Exception ex)
             {
@@ -87,8 +92,16 @@ namespace WebApi.Contollers
         {
             try
             {
-                var res = await _mediator.Send(new DeleteOrderCommand(id));
-                if (res == -1) return NotFound();
+                var result = await _mediator.Send(new DeleteOrderCommand(id));
+                
+                if(result == -1)
+                {
+                    return NotFound();
+                }
+                else if(result == -2)
+                {
+                    return Conflict("Order has already been delivered");
+                }
                 return NoContent();
             }
             catch (Exception ex)

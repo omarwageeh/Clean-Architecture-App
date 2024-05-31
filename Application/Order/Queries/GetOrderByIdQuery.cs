@@ -1,4 +1,5 @@
 ﻿using Application.Dtos;
+using Application.Dtos.Get;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Queries
 {
-    public class GetOrderByIdQuery : IRequest<OrderDto>
+    public class GetOrderByIdQuery : IRequest<GetOrderDto>
     {
         public Guid Id { get; set; }
 

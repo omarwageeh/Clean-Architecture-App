@@ -23,6 +23,11 @@ namespace Application.Handlers
             {
                 return -1;
             }
+            if(order.DeliveryTime < DateTime.Now)
+            {
+
+               return -2;
+            }
             await _uow.OrderRepo.Delete(request.Id);
             return await _uow.SaveChangesAsync(cancellationToken);
         }

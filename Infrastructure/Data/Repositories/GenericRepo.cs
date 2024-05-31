@@ -20,12 +20,17 @@ namespace Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task Add(T entity)
+        virtual public async Task Add(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
         }
-        
-        public async Task Delete(Guid id)
+
+        public async Task<bool> Any(Expression<Func<T,bool>> expression)
+        {
+            return await _context.Set<T>().AnyAsync(expression);
+        }
+
+        virtual public async Task Delete(Guid id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             if(entity != null)
@@ -34,7 +39,7 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? expression = null)
+        virtual public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? expression = null)
         {
             if(expression == null)
             {
@@ -45,13 +50,13 @@ namespace Infrastructure.Data.Repositories
             return await _context.Set<T>().Where(expression).ToListAsync();
         }
 
-        public async Task<T?> GetById(Guid id)
+        virtual public async Task<T?> GetById(Guid id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             return entity;
         }
 
-        public Task Update(T entity)
+        virtual public Task Update(T entity)
         {
             _context.Set<T>().Update(entity);
             return Task.CompletedTask;

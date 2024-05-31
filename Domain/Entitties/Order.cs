@@ -16,7 +16,7 @@ namespace Domain.Entitties
         public required CustomerDetails CustomerDetails { get; set; }
         [Required]
         public ICollection<OrderDetails> OrderDetails { get; set; } = [];
-        public decimal TotalCost => OrderDetails.Sum(x => x.Price * x.Quantity);
+        public decimal TotalCost => OrderDetails.Sum(x => x.Product.Price * x.Quantity);
         [Required] 
         public required DateTime DeliveryTime { get; set; }
     }

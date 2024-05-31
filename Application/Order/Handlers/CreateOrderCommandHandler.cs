@@ -1,5 +1,5 @@
 ﻿using Application.Commands;
-using Application.Dtos;
+using Application.Dtos.Create;
 using AutoMapper;
 using Domain.Contracts.UnitofWork;
 using Domain.Entitties;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Handlers
 {
-    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderDto?>
+    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderDto?>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ namespace Application.Handlers
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<OrderDto?> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<CreateOrderDto?> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             var order = _mapper.Map<Order>(request);
             foreach(var orderDetails in order.OrderDetails)
@@ -34,7 +34,7 @@ namespace Application.Handlers
             }
             await _uow.OrderRepo.Add(order);
             await _uow.SaveChangesAsync(cancellationToken);
-            return _mapper.Map<OrderDto>(order);
+            return _mapper.Map<CreateOrderDto>(order);
         }
     }
 }

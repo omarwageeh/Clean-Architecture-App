@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Common;
+using Application.Dtos.Get;
 using Application.Queries;
 using AutoMapper;
 using Domain.Contracts.Repositories;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Application.Handlers
 {
-    public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumerable<ProductDto>>
+    public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, GetProductsDto>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -22,10 +23,12 @@ namespace Application.Handlers
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+        public async Task<GetProductsDto> Handle(GetProductsQuery request, CancellationToken cancellationToken)
         {
-            var productList = await _uow.ProductRepo.GetAll();
-            return _mapper.Map<IEnumerable<Product>, IEnumerable < ProductDto >> (productList);
+            (var productList, var totalPages) = await _uow.ProductRepo.GetAll(request.Page, request.PageSize, request.Filter, request.FilterBy, request.SortBy, request.Descending);
+             var productDtoList= _mapper.Map<IEnumerable<ProductDto>>(productList);
+            
+            return new GetProductsDto(productDtoList, totalPages);
         }
     }
 }

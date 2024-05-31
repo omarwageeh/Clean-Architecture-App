@@ -1,4 +1,5 @@
-﻿using Domain.Entitties;
+﻿using Application.Dtos.Common;
+using Domain.Entitties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,17 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Dtos
+namespace Application.Dtos.Create
 {
-    public class OrderDto
+    public class CreateOrderDto
     {
         public Guid Id { get; set; }
         [Required]
-        public required string DeliveryAddress { get; set; }
+        public string DeliveryAddress { get; set; } = string.Empty;
         [Required]
-        public required CustomerDetailsDto CustomerDetails { get; set; }
+        public CustomerDetailsDto? CustomerDetails { get; set; }
         [Required]
-        public ICollection<OrderDetailsDto> OrderDetails { get; set; } = [];
+        public IEnumerable<CreateOrderDetailsDto> OrderDetails { get; set; } = [];
         public decimal TotalCost { get; set; }
         [Required]
         public DateTime DeliveryTime { get; set; }

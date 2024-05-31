@@ -4,6 +4,8 @@ using MediatR;
 using Application.Commands;
 using Application.Queries;
 using Asp.Versioning;
+using Application.Dtos;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace WebApi.Contollers
 {
@@ -35,11 +37,13 @@ namespace WebApi.Contollers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery getProductsQuery)
         {
             try
             {
-                return Ok(await _mediator.Send(new GetProductsQuery()));
+                var response = await _mediator.Send(getProductsQuery);
+               
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -52,8 +56,10 @@ namespace WebApi.Contollers
         {
             try 
             {
-                var product = await _mediator.Send(createProductCommand);
-                return Created($"/api/v{ApiVersion.Default}/Products/{product.Id}", product);
+                var response = await _mediator.Send(createProductCommand);
+
+                return response.Exists ?  Conflict("Product already exists") : 
+                    Created($"/api/v{ApiVersion.Default}/Products/{response.Product}", response.Product);
             }
             catch (Exception ex)
             {
@@ -72,8 +78,8 @@ namespace WebApi.Contollers
                     return ValidationProblem("Mismatch between id in uri and request body");
                 }
                 var result = await _mediator.Send(updateProductCommand);
-                if (result == -1) return NotFound();
-                return NoContent();
+                
+                return result == -1 ? NotFound() : NoContent();
             }
             catch (Exception ex) 
             {
@@ -87,8 +93,16 @@ namespace WebApi.Contollers
         {
             try
             {
-                var res = await _mediator.Send(new DeleteProductCommand(id));
-                if(res == -1) return NotFound();
+                var result = await _mediator.Send(new DeleteProductCommand(id));
+
+                if (result == -1)
+                {
+                    return NotFound();
+                }
+                else if(result == -2)
+                {
+                    return Conflict("Product is in use");
+                }
                 return NoContent();
             }
             catch (Exception ex)

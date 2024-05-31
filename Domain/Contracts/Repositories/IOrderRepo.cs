@@ -1,4 +1,5 @@
 ﻿using Domain.Entitties;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace Domain.Contracts.Repositories
 {
     public interface IOrderRepo : IGenericRepo<Order>
     {
+        Task<Tuple<IEnumerable<Order>, int>> GetAll(int page, int pageSize, string? filter, OrderFilter? filterBy, OrderSort? sortBy, bool descending = false);
     }
 }

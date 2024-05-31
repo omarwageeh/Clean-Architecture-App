@@ -24,7 +24,7 @@ namespace Domain.Entitties
 
         public Product(string name, string description, decimal price, string merchant, byte[]? image = null) : base()
         {
-            Name = name;
+            Name = name.ToLower();
             Description = description;
             Price = price;
             Merchant = merchant;

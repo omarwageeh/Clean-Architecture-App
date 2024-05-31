@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Create;
+using Application.Dtos.Get;
 using Application.Queries;
 using AutoMapper;
 using Domain.Contracts.UnitofWork;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Handlers
 {
-    public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto>
+    public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, GetOrderDto>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -22,10 +23,10 @@ namespace Application.Handlers
         }
 
         
-        public async Task<OrderDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GetOrderDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
             var order = await _uow.OrderRepo.GetById(request.Id);
-            return _mapper.Map<OrderDto>(order);
+            return _mapper.Map<GetOrderDto>(order);
         }
     }
 }

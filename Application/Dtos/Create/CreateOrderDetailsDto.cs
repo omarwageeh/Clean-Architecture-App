@@ -6,12 +6,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Application.Dtos
+namespace Application.Dtos.Create
 {
-    public class OrderDetailsDto
+    public class CreateOrderDetailsDto
     {
-        [Required]
-        public Guid Id { get; set; }
         [Required]
         public required Guid ProductId { get; set; }
         [Required]

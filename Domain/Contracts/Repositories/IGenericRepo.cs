@@ -13,6 +13,7 @@ namespace Domain.Contracts.Repositories
         Task<T?> GetById(Guid id);
         Task Add(T entity);
         Task Update(T entity);
+        Task<bool> Any(Expression<Func<T, bool>> expression);
         Task Delete(Guid id);
     }
 }

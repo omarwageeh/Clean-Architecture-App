@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entitties;
-using Application.Dtos;
 using System.ComponentModel.DataAnnotations;
+using Application.Dtos.Create;
 
 namespace Application.Commands
 {
-    public class CreateProductCommand : IRequest<ProductDto>
+    public class CreateProductCommand : IRequest<CreateProductDto>
     {
         [Required]
         public string Name { get; set; } = string.Empty;

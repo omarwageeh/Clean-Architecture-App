@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Common;
 using Application.Queries;
 using AutoMapper;
 using Domain.Contracts.UnitofWork;
