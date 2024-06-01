@@ -1,5 +1,5 @@
 ﻿using Application.Dtos.Common;
-using Domain.Entitties;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

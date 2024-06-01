@@ -4,6 +4,7 @@ using Application.Queries;
 using AutoMapper;
 using Domain.Contracts.UnitofWork;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,30 @@ namespace Application.Handlers
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public GetOrderByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
+        private readonly ILogger<GetOrderByIdQueryHandler> _logger;
+
+        public GetOrderByIdQueryHandler(IUnitOfWork uow, IMapper mapper, ILogger<GetOrderByIdQueryHandler> logger)
         {
             _uow = uow;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        
         public async Task<GetOrderDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
-            var order = await _uow.OrderRepo.GetById(request.Id);
-            return _mapper.Map<GetOrderDto>(order);
+            _logger.LogInformation("Handling GetOrderByIdQuery");
+
+            try
+            {
+                var order = await _uow.OrderRepo.GetById(request.Id);
+                _logger.LogInformation($"Retrieved order by ID: {order?.Id}");
+                return _mapper.Map<GetOrderDto>(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling GetOrderByIdQuery");
+                throw;
+            }
         }
     }
 }

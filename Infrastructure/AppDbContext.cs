@@ -1,5 +1,5 @@
 ﻿using Domain.Contracts;
-using Domain.Entitties;
+using Domain.Entities;
 using Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

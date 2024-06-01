@@ -4,6 +4,7 @@ using Application.Queries;
 using AutoMapper;
 using Domain.Contracts.UnitofWork;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,33 @@ namespace Application.Handlers
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public GetOrdersQueryHandler(IUnitOfWork uow, IMapper mapper)
+        private readonly ILogger<GetOrdersQueryHandler> _logger;
+
+        public GetOrdersQueryHandler(IUnitOfWork uow, IMapper mapper, ILogger<GetOrdersQueryHandler> logger)
         {
             _uow = uow;
             _mapper = mapper;
+            _logger = logger;
         }
+
         public async Task<GetOrdersDto> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
         {
-            (var orderList, var totalPages) = await _uow.OrderRepo.GetAll(request.Page, request.PageSize, request.Filter, request.FilterBy, request.SortBy, request.Desending);
-            var orderDtoList = _mapper.Map <IEnumerable<GetOrderDto>>(orderList);
+            try
+            {
+                _logger.LogInformation("Handling GetOrdersQuery");
 
-            return new GetOrdersDto(orderDtoList, totalPages);
+                (var orderList, var totalPages) = await _uow.OrderRepo.GetAll(request.Page, request.PageSize, request.Filter, request.FilterBy, request.SortBy, request.Desending);
+                var orderDtoList = _mapper.Map<IEnumerable<GetOrderDto>>(orderList);
+
+                _logger.LogInformation($"GetOrdersQuery handled successfully returned Order Count: {orderDtoList.Count()}" );
+
+                return new GetOrdersDto(orderDtoList, totalPages);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while handling GetOrdersQuery");
+                throw;
+            }
         }
     }
 }

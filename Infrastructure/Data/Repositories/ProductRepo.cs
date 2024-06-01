@@ -1,8 +1,9 @@
 ﻿using Domain.Contracts;
 using Domain.Contracts.Repositories;
-using Domain.Entitties;
+using Domain.Entities;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,24 @@ namespace Infrastructure.Data.Repositories
     public class ProductRepo : GenericRepo<Product>, IProductRepo
     {
         private readonly IAppDbContext _context;
-        public ProductRepo(IAppDbContext context) : base(context)
+        private readonly ILogger<ProductRepo> _logger;
+
+        public ProductRepo(IAppDbContext context, ILogger<ProductRepo> logger) : base(context, logger)
         {
             _context = context;
+            _logger = logger;
         }
+
         public async Task<Product?> GetProductByName(string name)
         {
+            _logger.LogInformation($"Getting product by name: {name}");
             return await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
         }
-        public async Task<Tuple<IEnumerable<Product>, int>> GetAll(int page, int pageSize, string? filter, ProductFilter? filterBy, ProductSort? sortBy, bool descending)
 
+        public async Task<Tuple<IEnumerable<Product>, int>> GetAll(int page, int pageSize, string? filter, ProductFilter? filterBy, ProductSort? sortBy, bool descending)
         {
+            _logger.LogInformation($"Getting all products with page: {page}, pageSize: {pageSize}, filter: {filter}, filterBy: {filterBy}, sortBy: {sortBy}, descending: {descending}");
+
             var query = _context.Products
                         .AsNoTracking()
                         .AsQueryable();
@@ -52,7 +60,7 @@ namespace Infrastructure.Data.Repositories
                 switch (sortBy)
                 {
                     case ProductSort.Price:
-                        query = descending ? query.OrderByDescending(p=> p.Price) : query.OrderBy(p => p.Price);
+                        query = descending ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price);
                         break;
                 }
             }
@@ -63,6 +71,8 @@ namespace Infrastructure.Data.Repositories
             var products = await query.Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .ToListAsync();
+
+            _logger.LogInformation($"Retrieved {products.Count} products");
 
             var combinedRet = new Tuple<IEnumerable<Product>, int>(products, totalPages);
 

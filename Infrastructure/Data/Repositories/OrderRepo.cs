@@ -1,9 +1,9 @@
 ﻿using Domain.Contracts;
 using Domain.Contracts.Repositories;
-using Domain.Entitties;
+using Domain.Entities;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,18 @@ namespace Infrastructure.Data.Repositories
     public class OrderRepo : GenericRepo<Order>, IOrderRepo
     {
         private readonly IAppDbContext _context;
-        public OrderRepo(IAppDbContext context) : base(context)
+        private readonly ILogger<OrderRepo> _logger;
+
+        public OrderRepo(IAppDbContext context, ILogger<OrderRepo> logger) : base(context, logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         override public Task<Order?> GetById(Guid id)
         {
+            _logger.LogInformation("Getting order by ID: {OrderId}", id);
+
             var order = _context.Orders
                         .AsNoTracking()
                         .Include(o => o.OrderDetails)
@@ -30,12 +35,15 @@ namespace Infrastructure.Data.Repositories
                         .Where(o => o.Id == id)
                         .FirstOrDefault();
 
+            _logger.LogInformation("Retrieved order by ID: {OrderId}", id);
+
             return Task.FromResult(order);
         }
 
         public async Task<Tuple<IEnumerable<Order>, int>> GetAll(int page, int pageSize, string? filter, OrderFilter? filterBy, OrderSort? sortBy, bool descending = false)
-
         {
+            _logger.LogInformation($"Getting all orders with page: {page}, pageSize: {pageSize}, filter: {filter}, filterBy: {filterBy}, sortBy: {sortBy}, descending: {descending}");
+
             var query = _context.Orders
                         .AsNoTracking()
                         .Include(o => o.OrderDetails)
@@ -45,7 +53,7 @@ namespace Infrastructure.Data.Repositories
 
             if (filterBy != null && filter != null)
             {
-                switch(filterBy)
+                switch (filterBy)
                 {
                     case OrderFilter.CustomerName:
                         query = query.Where(o => o.CustomerDetails.Name.Contains(filter));
@@ -85,6 +93,8 @@ namespace Infrastructure.Data.Repositories
             var orders = await query.Skip((page - 1) * pageSize)
                                     .Take(pageSize)
                                     .ToListAsync();
+
+            _logger.LogInformation("Retrieved all orders");
 
             var combinedRet = new Tuple<IEnumerable<Order>, int>(orders, totalPages);
 

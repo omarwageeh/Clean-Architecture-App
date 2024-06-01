@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Application.Commands;
 using Application.Queries;
 using Asp.Versioning;
-using Application.Dtos;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace WebApi.Contollers
 {
@@ -15,10 +12,11 @@ namespace WebApi.Contollers
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public ProductsController(IMediator mediator) 
-        { 
-             _mediator = mediator;
-            
+        private readonly ILogger<ProductsController> _logger;
+        public ProductsController(IMediator mediator, ILogger<ProductsController> logger)
+        {
+            _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -27,49 +25,56 @@ namespace WebApi.Contollers
         {
             try
             {
+                _logger.LogDebug($"Sending GetProductsByIdQuery called with id: {id}");
                 var product = await _mediator.Send(new GetProductByIdQuery(id));
-                return product == null ?  NotFound() : Ok(product);
+                _logger.LogInformation($"Receiving GetProductsByIdQuery returned product: {product}");
+                return product == null ? NotFound() : Ok(product);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in GetProducts");
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery getProductsQuery)
         {
             try
             {
+                _logger.LogDebug($"Sending GetProductsQuery: {getProductsQuery}");
                 var response = await _mediator.Send(getProductsQuery);
-               
+                _logger.LogInformation($"GetProductsQuery returned response: {response}");
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in GetProducts");
                 return BadRequest(ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(CreateProductCommand createProductCommand )
+        public async Task<IActionResult> AddProduct(CreateProductCommand createProductCommand)
         {
-            try 
+            try
             {
+                _logger.LogDebug($"Sending CreateProductCommand: {createProductCommand}");
                 var response = await _mediator.Send(createProductCommand);
-
-                return response.Exists ?  Conflict("Product already exists") : 
+                _logger.LogInformation($"CreateProductCommand returned : {response}");
+                return response.Exists ? Conflict("Product already exists") :
                     Created($"/api/v{ApiVersion.Default}/Products/{response.Product}", response.Product);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in AddProduct");
                 return BadRequest(ex.Message);
             }
         }
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateProducts(Guid id, UpdateProductCommand updateProductCommand)
+        public async Task<IActionResult> UpdateProduct(Guid id, UpdateProductCommand updateProductCommand)
         {
             try
             {
@@ -77,12 +82,14 @@ namespace WebApi.Contollers
                 {
                     return ValidationProblem("Mismatch between id in uri and request body");
                 }
+                _logger.LogDebug($"Sending UpdateProductCommand with id: {id}");
                 var result = await _mediator.Send(updateProductCommand);
-                
+                _logger.LogInformation("UpdateProductCommand returned result: {result}", result);
                 return result == -1 ? NotFound() : NoContent();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in UpdateProducts");
                 return BadRequest(ex.Message);
             }
         }
@@ -93,13 +100,14 @@ namespace WebApi.Contollers
         {
             try
             {
+                _logger.LogDebug($"Sending DeleteProduct called with id: {id}");
                 var result = await _mediator.Send(new DeleteProductCommand(id));
 
                 if (result == -1)
                 {
                     return NotFound();
                 }
-                else if(result == -2)
+                else if (result == -2)
                 {
                     return Conflict("Product is in use");
                 }
@@ -107,11 +115,9 @@ namespace WebApi.Contollers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "Error in DeleteProduct");
                 return BadRequest(ex.Message);
             }
         }
-
-
     }
 }

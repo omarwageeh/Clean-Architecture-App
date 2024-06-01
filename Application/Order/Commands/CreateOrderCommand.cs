@@ -1,6 +1,6 @@
 ﻿using Application.Dtos.Common;
 using Application.Dtos.Create;
-using Domain.Entitties;
+using Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;

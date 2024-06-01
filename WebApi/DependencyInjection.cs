@@ -12,6 +12,8 @@ using MediatR;
 using WebApi.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Application;
+using Domain;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,55 +23,33 @@ namespace Microsoft.Extensions.DependencyInjection
                  this IServiceCollection services)
         {
             services.AddScoped<IAppDbContext, AppDbContext>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IOrderDetailsRepo, OrderDetailsRepo>();
-            services.AddScoped<IOrderRepo, OrderRepo>();
-            services.AddScoped<IProductRepo, ProductRepo>();
-            services.AddScoped<ICustomerDetailsRepo, CustomerDetailsRepo>();
             services.AddAutoMapper(typeof(AutoMapperProfiles));
             services.AddScoped<IMediator, Mediator>();
             services.AddMediatR((config) =>
             {
-                config.RegisterServicesFromAssemblies(
-                    typeof(CreateProductCommandHandler).Assembly, 
-                    typeof(GetProductByIdQuery).Assembly, 
-                    typeof(CreateProductCommand).Assembly, 
-                    typeof(GetProductByIdQueryHandler).Assembly, 
-                    typeof(DeleteProductCommandHandler).Assembly, 
-                    typeof(DeleteProductCommand).Assembly, 
-                    typeof(UpdateProductCommand).Assembly,
-                    typeof(UpdateProductCommandHandler).Assembly,
-                    typeof(CreateOrderCommand).Assembly,
-                    typeof(CreateOrderCommandHandler).Assembly,
-                    typeof(GetOrderByIdQuery).Assembly,
-                    typeof(GetOrderByIdQueryHandler).Assembly,
-                    typeof(GetOrdersQueryHandler).Assembly,
-                    typeof(GetOrdersQuery).Assembly,
-                    typeof(UpdateOrderCommand).Assembly,
-                    typeof(UpdateOrderCommandHandler).Assembly,
-                    typeof(DeleteOrderCommand).Assembly,
-                    typeof(DeleteOrderCommandHandler).Assembly
-                    );
+                config.RegisterServicesFromAssemblies(ApplicationAssembly.Instance);
             });
 
 
             return services;
         }
 
-        //public static IServiceCollection AddRepositories(this IServiceCollection services, Assembly assembly)
-        //{
-        //    var interfaceType = assembly.GetType("IGenericRepo");
-        //    var types = assembly.GetTypes().Where(t => t.Name.EndsWith("Repo") && t.IsClass && !t.IsAbstract);
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            var interfaceType = typeof(DomainAssembly).Assembly.GetTypes().Where(type => type.Name.EndsWith("Repo") && type.IsInterface);
+            var types = typeof(InfrastructureAssembly).Assembly.GetTypes().Where(t => t.Name.EndsWith("Repo") && t.IsClass && !t.IsAbstract);
 
-        //    foreach (var type in types)
-        //    {                
-        //        if (interfaceType != null)
-        //        {
-        //            services.AddScoped(interfaceType, type);
-        //        }
-        //    }
+            foreach (var type in types)
+            {
+                var matchingInterface = interfaceType.FirstOrDefault(interfaceType => interfaceType.Name == $"I{type.Name}");
+                if (matchingInterface != null)
+                {
+                    services.AddScoped(matchingInterface, type);
+                }
+            }
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        //    return services;
-        //}
+            return services;
+        }
     }
  }

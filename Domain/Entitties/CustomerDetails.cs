@@ -1,7 +1,7 @@
 ﻿using Domain.Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entitties
+namespace Domain.Entities
 {
     public class CustomerDetails : BaseEntity
     {

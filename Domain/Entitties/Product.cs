@@ -8,7 +8,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entitties
+namespace Domain.Entities
 {
     public class Product : BaseEntity
     {

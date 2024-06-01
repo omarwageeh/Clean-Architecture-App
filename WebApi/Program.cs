@@ -1,6 +1,8 @@
 using Asp.Versioning;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
-
+builder.Services.AddRepositories();
 builder.Services.AddMyDependencyGroup();
 builder.Services.AddControllers();
+builder.Host.UseSerilog((context, cfg) =>
+cfg.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -36,6 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 

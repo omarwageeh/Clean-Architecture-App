@@ -4,7 +4,7 @@ using Application.Dtos.Create;
 using Application.Dtos.Get;
 using Application.Dtos.Update;
 using AutoMapper;
-using Domain.Entitties;
+using Domain.Entities;
 
 namespace WebApi.Helpers
 {

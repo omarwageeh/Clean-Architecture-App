@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entitties
+namespace Domain.Entities
 {
     public class Order : BaseEntity
     {
