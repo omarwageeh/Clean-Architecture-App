@@ -16,6 +16,7 @@ namespace Application.Commands
         public string Name { get; set; } = String.Empty;
         [Required]
         public string Description { get; set; } = String.Empty;
+        public byte[]? Image { get; set; }
         [Required]
         public decimal Price { get; set; }
         [Required]
