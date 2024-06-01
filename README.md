@@ -9,8 +9,8 @@ This is a project that aims to be a sample of a demo of the Clean Architecture.
 ## Table of Contents
 
 - [Installation](#installation)
+- [Libraries](#libraries)
 - [Usage](#usage)
-- [Library](#library)
 - [Contributing](#contributing)
 - [License](#license)
 
