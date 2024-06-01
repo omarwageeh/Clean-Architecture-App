@@ -4,7 +4,7 @@
 
 ## Description
 
-This is a project that aims to be a sample of a demo of the Clean Architecture.
+This project aims to be a demo of the Clean Architecture.
 
 ## Table of Contents
 
