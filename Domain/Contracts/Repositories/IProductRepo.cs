@@ -11,6 +11,6 @@ namespace Domain.Contracts.Repositories
     public interface IProductRepo : IGenericRepo<Product>
     {
         Task<Product?> GetProductByName(string name);
-        Task<Tuple<IEnumerable<Product>, int>> GetAll(int page, int pageSize, string? filter, ProductFilter? filterBy, ProductSort? sortBy, bool descending);
+        Task<(IEnumerable<Product>, int)> GetAll(int page, int pageSize, string? filter, ProductFilter? filterBy, ProductSort? sortBy, bool descending);
     }
 }

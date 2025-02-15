@@ -29,7 +29,7 @@ namespace Infrastructure.Data.Repositories
             return await _context.Products.FirstOrDefaultAsync(p => p.Name == name);
         }
 
-        public async Task<Tuple<IEnumerable<Product>, int>> GetAll(int page, int pageSize, string? filter, ProductFilter? filterBy, ProductSort? sortBy, bool descending)
+        public async Task<(IEnumerable<Product>, int)> GetAll(int page, int pageSize, string? filter, ProductFilter? filterBy, ProductSort? sortBy, bool descending)
         {
             _logger.LogInformation($"Getting all products with page: {page}, pageSize: {pageSize}, filter: {filter}, filterBy: {filterBy}, sortBy: {sortBy}, descending: {descending}");
 
@@ -74,7 +74,7 @@ namespace Infrastructure.Data.Repositories
 
             _logger.LogInformation($"Retrieved {products.Count} products");
 
-            var combinedRet = new Tuple<IEnumerable<Product>, int>(products, totalPages);
+            var combinedRet = (products, totalPages);
 
             return combinedRet;
         }
