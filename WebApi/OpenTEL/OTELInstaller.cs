@@ -1,5 +1,7 @@
 ﻿using Grafana.OpenTelemetry;
+using Microsoft.Identity.Client;
 using OpenTelemetry;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -8,37 +10,35 @@ namespace WebApi.OpenTEL
 {
     public static class OTELInstaller
     {
-        public static IServiceCollection AddOpenTelObservability(this IServiceCollection services, IConfiguration configuration, List<string> metricsNames)
+        public static IServiceCollection AddOpenTelObservability(this IServiceCollection services, IConfiguration configuration)
         {
             var observabilityOptions = configuration.GetSection(nameof(TelemetrySettings)).Get<TelemetrySettings>();
             if (observabilityOptions is null || string.IsNullOrEmpty(observabilityOptions.CollectorUri.AbsoluteUri) || string.IsNullOrEmpty(observabilityOptions.ServiceName))
                 return services;
             services.AddOpenTelemetry()
-               .ConfigureResource(resource => resource.AddService(observabilityOptions.ServiceName))
-               .AddMetrics(observabilityOptions, metricsNames)
+               .AddMetrics(observabilityOptions)
                .AddTracing(observabilityOptions);
             return services;
         }
-        private static OpenTelemetryBuilder AddTracing(this OpenTelemetryBuilder builder, TelemetrySettings telemetryOptions)
+        private static OpenTelemetryBuilder AddTracing(this OpenTelemetryBuilder builder, TelemetrySettings observabilityOptions)
         {
-            if (!telemetryOptions.EnabledTracing) return builder;
+            if (!observabilityOptions.EnabledTracing) return builder;
 
             builder.WithTracing(tracing =>
             {
                 tracing
                     .SetErrorStatusOnException()
-                    .SetSampler(new AlwaysOnSampler())
+                    .SetSampler(new TraceIdRatioBasedSampler(observabilityOptions.SamplingRatio))
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         options.RecordException = true;
                     });
                 tracing.AddHttpClientInstrumentation();
                 tracing.UseGrafana();
-
-                tracing
-                    .AddOtlpExporter(options =>
+                tracing.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName: observabilityOptions.ServiceName));
+                tracing.AddOtlpExporter(options =>
                     {
-                        options.Endpoint = telemetryOptions.CollectorUri;
+                        options.Endpoint = observabilityOptions.CollectorUri;
                         options.ExportProcessorType = ExportProcessorType.Batch;
                         options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     });
@@ -46,7 +46,7 @@ namespace WebApi.OpenTEL
 
             return builder;
         }
-        private static OpenTelemetryBuilder AddMetrics(this OpenTelemetryBuilder builder, TelemetrySettings telemetryOptions, List<string> metricsNames)
+        private static OpenTelemetryBuilder AddMetrics(this OpenTelemetryBuilder builder, TelemetrySettings telemetryOptions)
         {
             if (!telemetryOptions.EnabledMetrics) return builder;
 
@@ -57,13 +57,11 @@ namespace WebApi.OpenTEL
                 metrics.AddRuntimeInstrumentation();
                 metrics.AddProcessInstrumentation();
                 metrics.UseGrafana();
-                foreach (var metric in metricsNames)
-                {
-                    metrics.AddMeter(metric);
-                }
-
-                metrics
-                    .AddOtlpExporter(options =>
+                metrics.AddMeter(
+                            "Microsoft.AspNetCore.Hosting",
+                            "Microsoft.AspnetCore.Server.Kestrel", 
+                            "System.Net.Http");
+                metrics.AddOtlpExporter(options =>
                     {
                         options.Endpoint = telemetryOptions.CollectorUri;
                         options.ExportProcessorType = ExportProcessorType.Batch;

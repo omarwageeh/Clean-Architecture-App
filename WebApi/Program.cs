@@ -2,7 +2,7 @@ using Asp.Versioning;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Sinks.OpenTelemetry;
+using Serilog.Events;
 using WebApi.Middleware;
 using WebApi.OpenTEL;
 
@@ -16,27 +16,22 @@ builder.Services.AddRepositories();
 builder.Services.AddMyDependencyGroup();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddOpenTelObservability(builder.Configuration, []);
 var telemetrySettings = builder.Configuration.GetSection(nameof(TelemetrySettings)).Get<TelemetrySettings>()!;
+
 builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .Enrich.FromLogContext()
-        .WriteTo.OpenTelemetry(options =>
-        {
-            options.Endpoint = telemetrySettings.CollectorUri.AbsoluteUri;
-            options.Protocol = OtlpProtocol.Grpc;
-            options.IncludedData = IncludedData.TraceIdField | IncludedData.SpanIdField | IncludedData.SourceContextAttribute;
-            options.ResourceAttributes = new Dictionary<string, object>
-                                                    {
-                                                        {"service.name", telemetrySettings.ServiceName},
-                                                    };
-        })
-        .WriteTo.Console();
+    .Enrich.WithMachineName()
+    .WriteTo.OpenTelemetry(resourceAttributes: new Dictionary<string, object> { { "service.name", telemetrySettings.ServiceName } })
+    .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] {Message}{NewLine}{Exception}");
 });
-//builder.Host.UseSerilog((context, cfg) =>
-//cfg.ReadFrom.Configuration(context.Configuration));
+
+
+
+builder.Services.AddOpenTelObservability(builder.Configuration);
 
 
 builder.Services.AddApiVersioning(options =>
